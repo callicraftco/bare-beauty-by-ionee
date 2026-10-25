@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Book an appointment | Bare Beauty by Ionee</title>
+  <meta name="description" content="Book facials, waxing, lash extensions and lash lifts with Ionee. Pick your services and a time that works for you.">
+  <meta name="theme-color" content="#261c13">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preload" href="/assets/fonts/della-respira-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jost-variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/book.css">
+  <script type="module" src="/assets/js/book.js"></script>
+</head>
+<body class="task">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="task-bar">
+    <a class="lockup" href="/" aria-label="Bare Beauty by Ionee, home"><span>Bare beauty</span></a>
+    <a class="task-back" href="/">Back to the site</a>
+  </header>
+
+  <main id="main" class="book">
+    <div class="book-head">
+      <h1>Book an appointment</h1>
+      <p class="book-intro" data-intro>Pick your services, choose a time, then add your details.</p>
+      <ol class="stepper" data-stepper aria-label="Booking steps">
+        <li data-step-tab="1" aria-current="step"><span class="num">1</span><span>Services</span></li>
+        <li data-step-tab="2"><span class="num">2</span><span>Time</span></li>
+        <li data-step-tab="3"><span class="num">3</span><span>Details</span></li>
+      </ol>
+    </div>
+
+    <div class="book-body">
+      <div class="book-main">
+        <p class="notice" data-notice role="alert" hidden></p>
+
+        <!-- Step 1 -->
+        <section class="step" data-step="1" aria-labelledby="step1-title">
+          <h2 id="step1-title" class="step-title" tabindex="-1">Choose your services</h2>
+          <p class="step-help">Add as many as you like to one visit.</p>
+          <div class="pick-list" data-services>
+            <p class="loading">Loading the menu...</p>
+          </div>
+        </section>
+
+        <!-- Step 2 -->
+        <section class="step" data-step="2" aria-labelledby="step2-title" hidden>
+          <h2 id="step2-title" class="step-title" tabindex="-1">Pick a day and time</h2>
+          <p class="step-help" data-time-help>Days with open times are shown in dark type.</p>
+          <div class="calendar" data-calendar></div>
+          <div class="times" data-times aria-live="polite"></div>
+        </section>
+
+        <!-- Step 3 -->
+        <section class="step" data-step="3" aria-labelledby="step3-title" hidden>
+          <h2 id="step3-title" class="step-title" tabindex="-1">Your details</h2>
+          <p class="step-help">So I can confirm your appointment and reach you if anything changes.</p>
+          <form class="details" data-form novalidate>
+            <div class="field">
+              <label for="f-name">Full name</label>
+              <input id="f-name" name="name" type="text" autocomplete="name" required maxlength="80">
+              <p class="field-error" data-error-for="name"></p>
+            </div>
+            <div class="field">
+              <label for="f-phone">Mobile number</label>
+              <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required maxlength="30" placeholder="(555) 555-0100">
+              <p class="field-hint">For texts about this appointment.</p>
+              <p class="field-error" data-error-for="phone"></p>
+            </div>
+            <div class="field">
+              <label for="f-email">Email <span class="optional">optional</span></label>
+              <input id="f-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="160">
+              <p class="field-hint">For your confirmation and reminder.</p>
+              <p class="field-error" data-error-for="email"></p>
+            </div>
+            <div class="field">
+              <label for="f-ig">Instagram <span class="optional">optional</span></label>
+              <input id="f-ig" name="instagram" type="text" autocomplete="off" maxlength="60" placeholder="@yourhandle">
+            </div>
+            <fieldset class="field choice">
+              <legend>Have you been to Bare Beauty before?</legend>
+              <label class="radio"><input type="radio" name="firstVisit" value="yes" checked> <span>No, this is my first visit</span></label>
+              <label class="radio"><input type="radio" name="firstVisit" value="no"> <span>Yes, I've been before</span></label>
+            </fieldset>
+            <div class="field">
+              <label for="f-notes">Anything I should know? <span class="optional">optional</span></label>
+              <textarea id="f-notes" name="notes" rows="4" maxlength="800" aria-describedby="f-notes-hint" placeholder="Allergies, skin concerns, the lash look you like"></textarea>
+              <p class="field-hint" id="f-notes-hint">Only I see this.</p>
+            </div>
+            <div class="hp" aria-hidden="true">
+              <label for="f-website">Website</label>
+              <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
+            </div>
+            <div class="policy" data-policy></div>
+            <div class="field consent">
+              <label class="check"><input type="checkbox" name="agree" data-agree> <span>I agree to the <a href="/terms/" target="_blank" rel="noopener">booking terms</a>, including the cancellation policy.</span></label>
+              <p class="field-error" data-error-for="agree"></p>
+            </div>
+            <div class="field consent">
+              <label class="check"><input type="checkbox" name="offers" data-offers aria-describedby="f-offers-hint"> <span>Text me about openings and offers <span class="optional">optional</span></span></label>
+              <p class="field-hint" id="f-offers-hint">Occasional texts from Ionee. Reply STOP anytime to opt out. Message and data rates may apply.</p>
+            </div>
+            <p class="privacy-note">I use your details only to manage your appointments. See the <a href="/privacy/" target="_blank" rel="noopener">privacy policy</a> and <a href="/#before" target="_blank" rel="noopener">prep tips</a>.</p>
+          </form>
+        </section>
+
+        <!-- Done -->
+        <section class="step done" data-step="4" aria-labelledby="done-title" hidden>
+          <div class="done-mark" data-done-mark aria-hidden="true"></div>
+          <h1 id="done-title" class="step-title" tabindex="-1" data-done-title>Request sent</h1>
+          <p class="done-lead" data-done-lead></p>
+          <dl class="receipt" data-receipt></dl>
+          <p class="done-note" data-done-note></p>
+          <div class="done-actions" data-done-actions></div>
+        </section>
+      </div>
+
+      <aside class="summary" data-summary aria-label="Your visit">
+        <h2 class="summary-title">Your visit</h2>
+        <p class="summary-compact" data-summary-compact aria-live="polite">Pick at least one service</p>
+        <ul class="summary-list" data-summary-list><li class="summary-empty">No services yet.</li></ul>
+        <dl class="summary-meta">
+          <div><dt>When</dt><dd data-summary-when>Not picked yet</dd></div>
+          <div><dt>Time needed</dt><dd data-summary-duration>0 min</dd></div>
+          <div class="summary-total"><dt>Total</dt><dd data-summary-total>$0</dd></div>
+        </dl>
+        <div class="summary-actions">
+          <button type="button" class="btn btn-espresso" data-next disabled>Choose a time</button>
+          <button type="button" class="btn-text" data-back hidden>Back</button>
+        </div>
+        <p class="summary-fine" data-summary-fine hidden></p>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="task-foot">
+    <nav class="task-foot-links" aria-label="Policies">
+      <a href="/privacy/">Privacy policy</a>
+      <a href="/terms/">Booking terms</a>
+      <a href="/accessibility/">Accessibility</a>
+    </nav>
+  </footer>
+</body>
+</html>

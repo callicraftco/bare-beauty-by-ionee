@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /appointment/
+Disallow: /api/
+
+Sitemap: https://barebeautybyionee.com/sitemap.xml

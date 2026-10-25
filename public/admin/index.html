@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Studio | Bare Beauty by Ionee</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#261c13">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Studio">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/admin/manifest.webmanifest">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/admin/icons/studio-180.png">
+  <link rel="preload" href="/assets/fonts/jost-variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/admin/admin.css">
+  <script type="module" src="/admin/js/main.js"></script>
+</head>
+<body class="admin">
+  <!-- Sign in -->
+  <main class="login" data-login hidden>
+    <form class="login-card" data-login-form novalidate>
+      <span class="lockup login-lockup"><span>Bare beauty</span></span>
+      <h1>Studio</h1>
+      <p class="login-sub">Your bookings, clients and menu.</p>
+      <div class="field">
+        <label for="login-password">Password</label>
+        <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+      </div>
+      <p class="form-error" data-login-error role="alert"></p>
+      <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+    </form>
+  </main>
+
+  <!-- App -->
+  <div class="app" data-app hidden>
+    <nav class="nav" aria-label="Studio">
+      <span class="lockup nav-lockup"><span>Bare beauty</span></span>
+      <ul class="nav-list" data-nav></ul>
+      <div class="nav-foot">
+        <a class="nav-link" href="/" target="_blank" rel="noopener" data-site-link></a>
+        <button type="button" class="nav-link" data-signout></button>
+      </div>
+    </nav>
+    <header class="mobile-bar">
+      <span class="lockup"><span>Bare beauty</span></span>
+      <div class="mobile-bar-actions">
+        <button type="button" class="icon-btn" data-refresh aria-label="Refresh"></button>
+        <button type="button" class="btn btn-primary btn-small" data-new-appt>New</button>
+      </div>
+    </header>
+    <main class="main" id="main" data-main tabindex="-1"></main>
+  </div>
+
+  <!-- Side panel / bottom sheet -->
+  <div class="sheet-root" data-sheet-root hidden>
+    <div class="sheet-backdrop" data-close-sheet></div>
+    <section class="sheet" data-sheet role="dialog" aria-modal="true"></section>
+  </div>
+
+  <div class="toast" data-toast role="status" aria-live="polite" hidden></div>
+</body>
+</html>

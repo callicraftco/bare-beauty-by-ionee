@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Your appointment | Bare Beauty by Ionee</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#261c13">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/book.css">
+  <script type="module" src="/assets/js/appointment.js"></script>
+</head>
+<body class="task">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="task-bar">
+    <a class="lockup" href="/" aria-label="Bare Beauty by Ionee, home"><span>Bare beauty</span></a>
+    <a class="task-back" href="/book/">Book a visit</a>
+  </header>
+  <main id="main" class="manage">
+    <h1 data-title tabindex="-1">Your appointment</h1>
+    <p class="loading" data-loading>Loading your appointment...</p>
+    <p class="notice" data-notice role="alert" hidden></p>
+    <div data-view hidden>
+      <span class="status-chip" data-chip></span>
+      <dl class="receipt" data-receipt></dl>
+      <p class="done-note" data-note></p>
+      <div class="manage-actions" data-actions></div>
+      <div class="confirm-box" data-confirm hidden>
+        <p>Cancel this appointment? The time will open up for someone else.</p>
+        <div class="manage-actions">
+          <button type="button" class="btn btn-danger" data-cancel-yes>Yes, cancel it</button>
+          <button type="button" class="btn btn-ghost-light" data-cancel-no>Keep my appointment</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="task-foot">
+    <nav class="task-foot-links" aria-label="Policies">
+      <a href="/privacy/">Privacy policy</a>
+      <a href="/terms/">Booking terms</a>
+      <a href="/accessibility/">Accessibility</a>
+    </nav>
+  </footer>
+</body>
+</html>
