@@ -3,4 +3,4 @@ Disallow: /admin/
 Disallow: /appointment/
 Disallow: /api/
 
-Sitemap: https://barebeautybyionee.com/sitemap.xml
+Sitemap: https://barebeautybyionee.netlify.app/sitemap.xml
