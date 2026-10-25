@@ -200,3 +200,24 @@ export function renderContact(b) {
   }
   return items.join('');
 }
+
+// Stand-ins for "Recent work" until her Instagram is connected or she uploads photos:
+// one tile per signature service, each linking to her Instagram. No photos, so nothing
+// pretends to be her work. Real posts or uploads replace them on their own.
+const SAMPLES = [
+  ['Classic Glow Facial', 'facial', false],
+  ['Hybrid full set', 'lashes', true],
+  ['Full face wax', 'wax', false],
+  ['Korean lash lift', 'lashes', false],
+  ['Advanced Hydro-Facial', 'facial', false],
+  ['Glow Renewal Facial', 'sparkles', true],
+];
+
+export function renderSampleWork(b) {
+  const href = esc(igUrl(b && b.instagram));
+  const handle = esc((b && b.instagram) || 'barebeautybyionee');
+  return SAMPLES.map(
+    ([name, ico, light]) =>
+      `<a class="work-tile is-sample${light ? ' is-light' : ''}" href="${href}" target="_blank" rel="noopener"><span class="sample-inner"><span class="icon-ring sample-ring" aria-hidden="true">${icon(ico)}</span><span class="sample-name">${esc(name)}</span><span class="sample-handle">@${handle}</span></span><span class="visually-hidden"> (opens Instagram)</span></a>`,
+  ).join('');
+}

@@ -1,5 +1,5 @@
 // Landing page: pulls the live menu, hours and details Ionee edits in her panel.
-import { esc, igUrl, renderContact, renderFaq, renderHours, renderMenu, ribbonWords } from './render.js';
+import { esc, igUrl, renderContact, renderFaq, renderHours, renderMenu, renderSampleWork, ribbonWords } from './render.js';
 import { fillRibbon, initMotion, prepareReveals } from './motion.js';
 
 const $ = (sel, el = document) => el.querySelector(sel);
@@ -171,18 +171,20 @@ function renderWork(data, b, { skipInstagram = false } = {}) {
           } loading="lazy" decoding="async"></figure>`,
       )
       .join('');
+  } else {
+    html = renderSampleWork(b);
   }
   section.hidden = !html;
   if (!html) return;
   if (swap(grid, html)) {
     // A photo that fails to load (an expired Instagram link, say) leaves no gap.
-    // If every Instagram photo fails, her uploaded photos show instead.
+    // If every Instagram photo fails, her uploaded photos (or the stand-in tiles) show instead.
     grid.querySelectorAll('img').forEach((img) => {
       img.addEventListener('error', () => {
         const tile = img.closest('.work-tile');
         if (tile) tile.remove();
         if (grid.querySelector('.work-tile')) return;
-        if (ig && uploads.length) renderWork(data, b, { skipInstagram: true });
+        if (ig) renderWork(data, b, { skipInstagram: true });
         else section.hidden = true;
       });
     });
