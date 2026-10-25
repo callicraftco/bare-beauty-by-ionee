@@ -138,7 +138,7 @@ How to change the pages: they're plain HTML in `public/privacy/index.html`, `pub
 
 ## Motion
 
-The home page opens with the ring light switching on, the name coming into focus and the BY IONEE strip opening from the middle. After that the ring keeps a soft glow, menu rows and photos animate in as you scroll, the band under the hero slides with scrolling, and the booking pages answer each tap. All of it is skipped for anyone with reduced motion turned on in their phone or computer settings.
+The home page opens with the ring light switching on, the name coming into focus and the BY IONEE strip opening from the middle. After that the ring keeps a soft glow, menu rows and photos animate in as you scroll, the band under the hero drifts slowly (it pauses when it is off screen), and the booking pages answer each tap. All of it is skipped for anyone with reduced motion turned on in their phone or computer settings.
 
 The code is `public/assets/js/motion.js` and the Motion sections at the end of `site.css` and `book.css`. `public/assets/js/intro.js` shortens the opening to a quick fade the second time someone lands on the home page in a visit.
 

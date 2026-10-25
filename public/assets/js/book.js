@@ -1,5 +1,6 @@
 // Booking flow: services, then a day and time, then details.
 import { esc, formatDuration, formatTime, groupCategories, money } from './render.js';
+import { categoryIcon, icon } from './icons.js';
 import { addMonths, daysInMonth, googleCalendarUrl, icsFile, longDate, monthLabel, shortDate, weekdayIndex, DAYS_SHORT } from './dates.js';
 
 const $ = (sel, el = document) => el.querySelector(sel);
@@ -92,7 +93,7 @@ function renderServices() {
           return `${grouped ? `<h3 class="pick-sub">${esc(c.name)}</h3>` : ''}${c.note ? `<p class="pick-note">${esc(c.note)}</p>` : ''}<div class="pick-rows">${rows}</div>`;
         })
         .join('');
-      return `<fieldset class="pick-group"><legend class="pick-group-title">${esc(block.title)}</legend>${cats}</fieldset>`;
+      return `<fieldset class="pick-group"><legend class="pick-group-title"><span class="pick-group-label">${icon(categoryIcon(`${block.cats[0].id} ${block.title}`))}${esc(block.title)}</span></legend>${cats}</fieldset>`;
     })
     .join('');
   $('[data-services]').innerHTML = html;

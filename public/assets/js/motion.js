@@ -15,6 +15,8 @@ export const motionOn = () => !reduced.matches && 'IntersectionObserver' in wind
 const REVEALS = [
   ['.menu-head', 'rise'],
   ['.cat', 'menu'],
+  ['.how-title', 'rise'],
+  ['.how-steps > li', 'rise'],
   ['.about-photo', 'frame'],
   ['.about-copy', 'rise'],
   ['.work-head', 'rise'],
@@ -176,31 +178,27 @@ function followPointer(hero) {
 
 // ---------------------------------------------------------------- ribbon
 
-let ribbonSet = 0;
+// The band drifts slowly on its own. The track holds two identical halves, each wider than the
+// screen, and CSS slides it by exactly one half on a loop. That slide runs on the graphics side
+// of the browser, not in script, so it stays smooth on phones even mid-scroll.
+const RIBBON_SPEED = 30; // pixels per second
 
-// Fills the band with enough copies to cover the screen while it slides.
 export function fillRibbon(words) {
   const track = document.querySelector('[data-ribbon]');
   if (!track) return;
-  const set = words && words.length ? renderRibbon(words) : track.firstElementChild ? track.firstElementChild.innerHTML : '';
+  const first = track.querySelector('.ribbon-set');
+  const set = words && words.length ? renderRibbon(words) : first ? first.innerHTML : '';
   if (!set) return;
+  track.classList.remove('is-moving');
   track.innerHTML = `<span class="ribbon-set">${set}</span>`;
   if (!motionOn()) return;
   const width = track.firstElementChild.getBoundingClientRect().width;
   if (!width) return;
-  ribbonSet = width;
-  const copies = Math.ceil((window.innerWidth * 1.6) / width) + 1;
-  track.innerHTML = Array.from({ length: copies }, () => `<span class="ribbon-set">${set}</span>`).join('');
-  moveRibbon();
-}
-
-function moveRibbon() {
-  const track = document.querySelector('[data-ribbon]');
-  if (!track || !ribbonSet) return;
-  const y = window.scrollY;
-  const offset = (y * 0.42) % ribbonSet;
-  track.style.transform = `translate3d(${(-offset).toFixed(1)}px, 0, 0)`;
-  track.style.setProperty('--spin', `${(y * 0.25).toFixed(1)}deg`);
+  const perHalf = Math.max(1, Math.ceil(window.innerWidth / width));
+  const half = Array.from({ length: perHalf }, () => `<span class="ribbon-set">${set}</span>`).join('');
+  track.innerHTML = half + half;
+  track.style.setProperty('--ribbon-time', `${((width * perHalf) / RIBBON_SPEED).toFixed(1)}s`);
+  track.classList.add('is-moving');
 }
 
 // ---------------------------------------------------------------- scroll
@@ -217,7 +215,6 @@ function onScroll(hero) {
         last = p;
       }
     }
-    moveRibbon();
   };
   window.addEventListener(
     'scroll',
@@ -245,6 +242,9 @@ export function initMotion() {
     new IntersectionObserver(([e]) => hero.classList.toggle('is-off', !e.isIntersecting)).observe(hero);
   }
   onScroll(hero);
+  // The band rests while it's off screen.
+  const ribbon = document.querySelector('.ribbon');
+  if (ribbon) new IntersectionObserver(([e]) => ribbon.classList.toggle('is-off', !e.isIntersecting)).observe(ribbon);
   prepareReveals();
   bindFaq();
   const settle = () => fillRibbon();

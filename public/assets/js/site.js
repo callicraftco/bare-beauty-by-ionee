@@ -106,6 +106,15 @@ function apply(data) {
 
   swap($('[data-contact]'), renderContact(b));
 
+  // The last booking step says what happens next: a request she confirms, or booked right away.
+  if (data.booking) {
+    const instant = data.booking.mode === 'instant';
+    const name = $('[data-how-name]');
+    const text = $('[data-how-text]');
+    if (name) name.textContent = instant ? "You're booked" : 'Get confirmed';
+    if (text) text.textContent = instant ? 'Your time is confirmed right away.' : "I'll confirm your appointment by text or email.";
+  }
+
   if (data.services && Array.isArray(data.services.categories)) {
     swap($('[data-menu]'), renderMenu(data.services.categories));
     fillRibbon(ribbonWords(data.services.categories, b.tagline));

@@ -269,6 +269,16 @@
 .menu-flow .cat:last-child {
   padding-bottom: 0;
 }
+.cat-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+.cat-icon {
+  width: 48px;
+  height: 48px;
+  font-size: 22px;
+}
 .cat-name {
   font-size: clamp(2rem, 3.6vw, 2.5rem);
   color: var(--rose-gold);
@@ -648,6 +658,16 @@ a.work-tile:focus-visible .work-cap {
 .faq-item summary:hover span {
   color: var(--umber);
 }
+.faq-icon {
+  display: inline-flex;
+  flex: none;
+  font-size: 22px;
+  color: var(--umber);
+}
+.faq-q {
+  flex: 1;
+  min-width: 0;
+}
 .faq-answer {
   padding: 0 0 22px;
   color: #3d2e21;
@@ -677,6 +697,12 @@ a.work-tile:focus-visible .work-cap {
     grid-template-columns: 1.15fr 1fr 1fr;
     gap: var(--s-7);
   }
+}
+.visit-icon {
+  width: 44px;
+  height: 44px;
+  margin-bottom: var(--s-4);
+  font-size: 20px;
 }
 .visit-block h3 {
   font-size: 1.5rem;
@@ -728,10 +754,16 @@ a.work-tile:focus-visible .work-cap {
   gap: var(--s-4);
 }
 .contact-label {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.8125rem;
   letter-spacing: 0.04em;
   color: var(--mist);
+}
+.contact-label .icon {
+  font-size: 15px;
+  color: var(--rose-gold);
 }
 .contact a {
   color: var(--rose-gold);
@@ -745,6 +777,55 @@ a.work-tile:focus-visible .work-cap {
 }
 .visit-cta {
   margin-top: var(--s-8);
+}
+
+/* How booking works: three steps under the menu */
+.how {
+  margin-top: var(--s-9);
+  padding-top: var(--s-7);
+  border-top: 1px solid rgba(162, 127, 85, 0.22);
+}
+.how-title {
+  font-size: clamp(1.5rem, 2.6vw, 1.875rem);
+  color: var(--silk);
+}
+.how-steps {
+  list-style: none;
+  margin: var(--s-6) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s-5);
+}
+.how-steps li {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+.how-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.how-name {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  line-height: 1.3;
+  color: var(--rose-gold);
+}
+.how-text {
+  color: var(--mist);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+@media (min-width: 860px) {
+  .how-steps {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--s-7);
+  }
+  .how-steps li {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 /* Footer */
@@ -786,9 +867,16 @@ a.work-tile:focus-visible .work-cap {
   gap: var(--s-5);
 }
 .footer-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   color: var(--silk);
   text-decoration: none;
   font-size: 0.9375rem;
+}
+.footer-nav .icon {
+  font-size: 16px;
+  color: var(--rose-gold);
 }
 .footer-nav a:hover {
   color: var(--rose-gold);
@@ -855,20 +943,56 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Ribbon under the hero: the menu's sections and the tagline, sliding as you scroll */
+/* Ribbon under the hero: the menu's sections and the tagline, drifting slowly.
+   The edges fade into the band with two overlays (cheaper on phones than a mask). */
 .ribbon {
   position: relative;
   overflow: hidden;
   background: var(--roast);
   border-top: 1px solid rgba(162, 127, 85, 0.22);
   padding: clamp(16px, 2.6vw, 28px) 0;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+.ribbon::before,
+.ribbon::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 8%;
+  pointer-events: none;
+}
+.ribbon::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--roast), rgba(27, 20, 13, 0));
+}
+.ribbon::after {
+  right: 0;
+  background: linear-gradient(270deg, var(--roast), rgba(27, 20, 13, 0));
 }
 .ribbon-track {
   display: flex;
   width: max-content;
   will-change: transform;
+}
+.ribbon-track.is-moving {
+  animation: ribbon-drift var(--ribbon-time, 60s) linear infinite;
+}
+.ribbon.is-off .ribbon-track {
+  animation-play-state: paused;
+}
+@keyframes ribbon-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ribbon-track.is-moving {
+    animation: none;
+  }
 }
 .ribbon-set {
   display: flex;
@@ -894,7 +1018,6 @@ html {
   width: clamp(14px, 1.6vw, 22px);
   height: auto;
   fill: var(--rose-gold);
-  rotate: var(--spin, 0deg);
 }
 
 /* ------------------------------------------------------------------ Motion
@@ -1165,12 +1288,12 @@ html {
 }
 
 /* The menu writes itself out: names, then the dotted leaders, then the prices */
-.motion [data-rv='menu'] :is(.cat-name, .sub-name, .cat-note) {
+.motion [data-rv='menu'] :is(.cat-icon, .cat-name, .sub-name, .cat-note) {
   transition:
     opacity 0.8s var(--ease-out) var(--d, 0ms),
     transform 0.8s var(--ease-out) var(--d, 0ms);
 }
-.motion [data-rv='menu']:not(.is-in) :is(.cat-name, .sub-name, .cat-note) {
+.motion [data-rv='menu']:not(.is-in) :is(.cat-icon, .cat-name, .sub-name, .cat-note) {
   opacity: 0;
   transform: translateY(12px);
 }

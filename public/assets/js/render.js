@@ -1,5 +1,6 @@
 // Turns studio data into HTML. Used in the browser (site.js) and by
 // scripts/render-static.mjs, which bakes the default menu into index.html.
+import { categoryIcon, faqIcon, icon } from './icons.js';
 
 export function esc(value) {
   return String(value ?? '')
@@ -77,18 +78,23 @@ function catList(c) {
   </ul>`;
 }
 
+// A section heading with its icon in a small ring: Facials, Waxing, Lashes.
+function catHead(id, title) {
+  return `<div class="cat-head"><span class="icon-ring cat-icon" aria-hidden="true">${icon(categoryIcon(`${id} ${title}`))}</span><h3 class="cat-name">${esc(title)}</h3></div>`;
+}
+
 function renderBlock(block, featured) {
   const single = block.cats.length === 1 && (!block.group || block.group === block.cats[0].name);
   const id = `cat-${esc(block.cats[0].id)}`;
   if (single) {
     const c = block.cats[0];
     return `<article class="cat${featured ? ' is-featured' : ''}" id="${id}">
-  <h3 class="cat-name">${esc(c.name)}</h3>${c.note ? `\n  <p class="cat-note">${esc(c.note)}</p>` : ''}
+  ${catHead(c.id, c.name)}${c.note ? `\n  <p class="cat-note">${esc(c.note)}</p>` : ''}
   ${catList(c)}
 </article>`;
   }
   return `<article class="cat${featured ? ' is-featured' : ''}" id="${id}">
-  <h3 class="cat-name">${esc(block.title)}</h3>
+  ${catHead(block.cats[0].id, block.title)}
   ${block.cats
     .map(
       (c) => `<section class="sub">
@@ -171,7 +177,7 @@ export function renderFaq(faq) {
   return faq
     .map(
       (f) => `<details class="faq-item">
-  <summary><span>${esc(f.q)}</span></summary>
+  <summary><span class="faq-icon" aria-hidden="true">${icon(faqIcon(f))}</span><span class="faq-q">${esc(f.q)}</span></summary>
   <div class="faq-answer">${esc(f.a)
     .split(/\n{2,}/)
     .map((p) => `<p>${p.replace(/\n/g, '<br>')}</p>`)
@@ -184,13 +190,13 @@ export function renderFaq(faq) {
 export function renderContact(b) {
   const items = [];
   if (b.phone) {
-    items.push(`<li><span class="contact-label">Text or call</span><a href="${esc(smsHref(b.phone))}">${esc(b.phone)}</a></li>`);
+    items.push(`<li><span class="contact-label">${icon('phone')}Text or call</span><a href="${esc(smsHref(b.phone))}">${esc(b.phone)}</a></li>`);
   }
   if (b.instagram) {
-    items.push(`<li><span class="contact-label">Instagram</span><a href="${esc(igUrl(b.instagram))}" rel="noopener">@${esc(b.instagram)}</a></li>`);
+    items.push(`<li><span class="contact-label">${icon('instagram')}Instagram</span><a href="${esc(igUrl(b.instagram))}" rel="noopener">@${esc(b.instagram)}</a></li>`);
   }
   if (b.email) {
-    items.push(`<li><span class="contact-label">Email</span><a href="mailto:${esc(b.email)}">${esc(b.email)}</a></li>`);
+    items.push(`<li><span class="contact-label">${icon('mail')}Email</span><a href="mailto:${esc(b.email)}">${esc(b.email)}</a></li>`);
   }
   return items.join('');
 }
