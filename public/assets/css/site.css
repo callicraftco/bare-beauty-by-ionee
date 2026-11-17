@@ -926,7 +926,14 @@ a.work-tile.is-sample:focus-visible .sample-ring {
 }
 .footer-nav {
   display: flex;
-  gap: var(--s-5);
+  flex-wrap: wrap;
+  gap: var(--s-3) var(--s-5);
+}
+/* Her social links stay together: beside Book and Menu when there's room, on their own line on a phone */
+.footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3) var(--s-5);
 }
 .footer-nav a {
   display: inline-flex;
@@ -1483,6 +1490,9 @@ html {
 }
 .motion [data-rv='write'] span + span {
   --at: calc(var(--d, 0ms) + 1.15s);
+}
+.motion [data-rv='write'] span + span + span {
+  --at: calc(var(--d, 0ms) + 2.3s);
 }
 .motion [data-rv='write']:not(.is-in) span {
   -webkit-mask-position: 100% 0;

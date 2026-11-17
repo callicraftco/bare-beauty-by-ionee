@@ -161,10 +161,19 @@ export const DEFAULT_SETTINGS = {
     phone: '',
     email: '',
     instagram: 'barebeautybyionee',
+    tiktok: '', // handle, without the @
+    facebook: '', // full link to her page
     about:
       "Bare Beauty is my studio for facials, waxing and lashes. I keep things calm, clean and personal, so you can actually relax. Tell me what's going on with your skin or the look you want, and we'll take it from there.",
     announcement: '',
     timezone: 'America/New_York',
+  },
+  // Lines on the home page outside the menu and policies. An empty one is hidden.
+  website: {
+    servicesLine: 'Facials, waxing, lash extensions and Korean lash lifts', // under the tagline; the area is added after it
+    hoursNote: 'By appointment only.', // under Hours
+    whereNote: 'The exact address is shared once your appointment is confirmed.', // under Where
+    signoff: 'Invest in your skin.\nYou are worth it.', // script lines at the bottom, one per line
   },
   hours: {
     sun: day(false),

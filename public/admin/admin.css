@@ -944,6 +944,8 @@ body.sheet-open {
 }
 .admin .field {
   display: grid;
+  /* Fields side by side keep their boxes at the same height, whether or not one has a hint */
+  align-content: start;
   gap: 6px;
   min-width: 0;
   border: 0;
@@ -1415,6 +1417,8 @@ body.sheet-open {
 }
 .stack {
   display: grid;
+  /* One column exactly as wide as the screen allows, so a wide grid inside (the Instagram posts) can't push it wider */
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
 }
 .split {

@@ -179,6 +179,29 @@ const site2 = await api('GET', '/site');
 check('site shows the new price', site2.data.services.categories[0].services[0].price === 65);
 services.categories[0].services[0].price = 60;
 await api('PUT', '/admin/services', services, token);
+
+// Social accounts and the lines Ionee edits on the home page
+const social = await api(
+  'PUT',
+  '/admin/settings',
+  {
+    ...settings,
+    business: { ...settings.business, instagram: '@barebeautybyionee', tiktok: 'https://www.tiktok.com/@bare.beauty?lang=en', facebook: 'm.facebook.com/barebeautybyionee?mibextid=abc' },
+    website: { servicesLine: 'Facials and lashes', hoursNote: '', whereNote: 'Free parking out front.', signoff: 'Line one\n\nLine two\nLine three\nLine four' },
+  },
+  token,
+);
+const sb = social.data.settings && social.data.settings.business;
+check('social handles and links are cleaned', social.status === 200 && sb.instagram === 'barebeautybyionee' && sb.tiktok === 'bare.beauty' && sb.facebook === 'https://www.facebook.com/barebeautybyionee', JSON.stringify(sb));
+const site3 = await api('GET', '/site');
+const sw = site3.data.website || {};
+check(
+  'the site gets the social links and the edited lines',
+  site3.data.business.tiktok === 'bare.beauty' && site3.data.business.facebook === 'https://www.facebook.com/barebeautybyionee' && sw.servicesLine === 'Facials and lashes' && sw.hoursNote === '' && sw.whereNote === 'Free parking out front.' && sw.signoff === 'Line one\nLine two\nLine three',
+  JSON.stringify(sw),
+);
+const badFb = await api('PUT', '/admin/settings', { ...settings, business: { ...settings.business, facebook: 'https://example.com/page' } }, token);
+check('a link that is not Facebook is refused', badFb.status === 400);
 await api('PUT', '/admin/settings', settings, token);
 
 // Many people booking at the same moment

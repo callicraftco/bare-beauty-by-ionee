@@ -1,5 +1,5 @@
-// Settings: business details, hours, policies, messages, photos, Instagram, calendar,
-// privacy, backup, password.
+// Settings: business details, hours and booking rules, the words on the website, social
+// media (with the Instagram feed), photos, policies, messages, calendar, privacy, backup, password.
 import {
   $,
   $$,
@@ -31,11 +31,12 @@ function draft() {
 
 const TABS = [
   ['business', 'Business'],
-  ['hours', 'Booking'],
+  ['hours', 'Hours and booking'],
+  ['website', 'Website'],
+  ['social', 'Social media'],
+  ['photos', 'Photos'],
   ['policies', 'Policies'],
   ['messages', 'Texts'],
-  ['photos', 'Photos'],
-  ['instagram', 'Instagram'],
   ['calendar', 'Calendar'],
   ['privacy', 'Privacy'],
   ['backup', 'Backup'],
@@ -62,26 +63,24 @@ const area = (id, label, value, attrs = '', hint = '') =>
 
 function tabBusiness() {
   const b = settings().business;
+  const w = settings().website;
   const zones = ZONES.some(([z]) => z === b.timezone) ? ZONES : [...ZONES, [b.timezone, b.timezone]];
   return `<div class="stack">
     <div class="form-grid">
       ${field('b-name', 'Business name', b.name, 'data-path="business.name" maxlength="80"')}
-      ${field('b-tagline', 'Tagline', b.tagline, 'data-path="business.tagline" maxlength="140"')}
+      ${field('b-phone', 'Phone for texts and calls', b.phone, 'data-path="business.phone" type="tel" maxlength="30"', 'Shown on the site.')}
     </div>
     <div class="form-grid">
-      ${field('b-phone', 'Phone for texts and calls', b.phone, 'data-path="business.phone" type="tel" maxlength="30"', 'Shown on the site.')}
       ${field('b-email', 'Studio email', b.email, 'data-path="business.email" type="email" maxlength="160"', 'Shown on the site. Booking emails go here too.')}
-      ${field('b-ig', 'Instagram handle', b.instagram, 'data-path="business.instagram" maxlength="60"')}
+      <div class="field"><label for="b-tz">Time zone</label><select id="b-tz" data-path="business.timezone">${zones
+        .map(([z, l]) => `<option value="${esc(z)}" ${z === b.timezone ? 'selected' : ''}>${esc(l)}</option>`)
+        .join('')}</select></div>
     </div>
     <div class="form-grid">
       ${field('b-area', 'Area you work in', b.area, 'data-path="business.area" maxlength="80" placeholder="Lakeland, FL"', 'Public. Shown on the site.')}
       ${area('b-address', 'Studio address', b.address, 'data-path="business.address" rows="2" maxlength="200"', 'Private. Only sent to clients once their appointment is confirmed.')}
     </div>
-    ${area('b-about', 'About you', b.about, 'data-path="business.about" rows="5" maxlength="1500"', 'Shown under "Hi, I\'m Ionee". Leave a blank line between paragraphs.')}
-    ${field('b-announce', 'Announcement bar', b.announcement, 'data-path="business.announcement" maxlength="160" placeholder="Booked through Nov 15. New openings every Monday."', 'Shows across the top of the site. Leave empty to hide it.')}
-    <div class="field"><label for="b-tz">Time zone</label><select id="b-tz" data-path="business.timezone">${zones
-      .map(([z, l]) => `<option value="${esc(z)}" ${z === b.timezone ? 'selected' : ''}>${esc(l)}</option>`)
-      .join('')}</select></div>
+    ${field('w-where', 'Note under "Where"', w.whereNote, 'data-path="website.whereNote" maxlength="200"', 'Shows under your area on the site. Leave empty to hide it.')}
   </div>`;
 }
 
@@ -108,6 +107,7 @@ function tabHours() {
         })
         .join('')}</div>
       <p class="hint" style="margin-top:8px">For a lunch break or a day off, use Block time on the Schedule.</p>
+      <div style="margin-top:16px">${field('w-hours', 'Note under your hours', s.website.hoursNote, 'data-path="website.hoursNote" maxlength="160" placeholder="By appointment only."', 'Shows under the hours on the site, for example a holiday closure. Leave empty to hide it.')}</div>
     </section>
     <section class="stack">
       <h2 class="section-title">Booking rules</h2>
@@ -127,6 +127,39 @@ function tabHours() {
       </div>
       ${area('k-pay', 'Payment and deposit note', k.paymentNote, 'rows="2" maxlength="400" data-path="booking.paymentNote" placeholder="Payment is due at your appointment. Cash, Zelle and Cash App accepted."', 'Shown when clients book and in confirmations.')}
     </section>
+  </div>`;
+}
+
+function tabWebsite() {
+  const b = settings().business;
+  const w = settings().website;
+  const areaHint = b.area
+    ? `Your area is added at the end: "&hellip; in ${esc(b.area)}."`
+    : 'Your area from the Business tab is added at the end once you fill it in.';
+  return `<div class="stack">
+    <p class="page-sub">The words on your home page, from top to bottom. Your menu, hours, photos and questions each have their own place.</p>
+    ${field('b-announce', 'Announcement bar', b.announcement, 'data-path="business.announcement" maxlength="160" placeholder="Booked through Nov 15. New openings every Monday."', 'A thin bar across the very top. Leave empty to hide it.')}
+    ${field('b-tagline', 'Tagline', b.tagline, 'data-path="business.tagline" maxlength="140"', 'Under your logo. Its phrases also scroll in the band below it.')}
+    ${field('w-services', 'Line under the tagline', w.servicesLine, 'data-path="website.servicesLine" maxlength="160"', areaHint)}
+    ${area('b-about', 'About you', b.about, 'data-path="business.about" rows="6" maxlength="1500"', 'Shown under "Hi, I\'m Ionee". Leave a blank line between paragraphs.')}
+    ${area('w-signoff', 'Closing line', w.signoff, 'data-path="website.signoff" rows="3" maxlength="200"', 'Written out in script at the bottom of the page. Up to 3 short lines: press Enter for a new line.')}
+  </div>`;
+}
+
+function tabSocial() {
+  const b = settings().business;
+  const handle = 'maxlength="160" autocapitalize="none" autocorrect="off" spellcheck="false"';
+  return `<div class="stack">
+    <section class="stack">
+      <h2 class="section-title">Your accounts</h2>
+      <p class="hint">Each one you fill in shows on your site under "Get in touch" and at the bottom of the page. Leave one empty to hide it.</p>
+      <div class="form-grid">
+        ${field('b-ig', 'Instagram', b.instagram, `data-path="business.instagram" ${handle} placeholder="barebeautybyionee"`, 'Your handle, or paste the link to your profile.')}
+        ${field('b-tiktok', 'TikTok', b.tiktok, `data-path="business.tiktok" ${handle} placeholder="barebeautybyionee"`, 'Your handle, or paste the link to your profile.')}
+        ${field('b-fb', 'Facebook', b.facebook, `data-path="business.facebook" ${handle.replace('160', '300')} inputmode="url" placeholder="facebook.com/yourpage"`, 'Paste the link to your page.')}
+      </div>
+    </section>
+    ${instagramFeed()}
   </div>`;
 }
 
@@ -242,11 +275,10 @@ function ago(iso) {
 
 const thumb = (url) => `/.netlify/images?url=${encodeURIComponent(url)}&w=200&h=250&fit=cover`;
 
-function tabInstagram() {
+function instagramFeed() {
   const ig = S.data.instagram || { connected: false };
   if (!ig.connected) {
-    return `<div class="stack">
-      <section class="panel panel-pad stack">
+    return `<section class="panel panel-pad stack">
         <h2 class="section-title">Show your Instagram posts on your site</h2>
         <p class="hint">Your latest posts fill "Recent work" on the home page and update by themselves every few hours. Each one links to the post on Instagram.</p>
         <form class="form" data-ig-form novalidate>
@@ -255,17 +287,16 @@ function tabInstagram() {
           <div class="row-actions"><button type="submit" class="btn btn-primary btn-small">Connect Instagram</button></div>
         </form>
         <p class="hint">Getting the token is a one-time, 15-minute job in Meta's developer site. The setup guide that came with the site has the steps ("Instagram feed"). Your Instagram has to be a professional account (Creator or Business). Switching is free in the Instagram app.</p>
-      </section>
-    </div>`;
+      </section>`;
   }
   const soon = ig.expiresAt && Date.parse(ig.expiresAt) - Date.now() < 7 * 86400000;
   const line = ig.lastError
     ? `<p class="status-line"><span class="dot-off"></span> ${esc(ig.lastError)}</p>`
     : `<p class="status-line"><span class="dot-ok"></span> Connected to @${esc(ig.username)}. Updated ${esc(ago(ig.lastSyncOk))}.</p>`;
   const posts = ig.posts || [];
-  return `<div class="stack">
+  return `
     <section class="panel panel-pad stack">
-      <h2 class="section-title">Instagram feed</h2>
+      <h2 class="section-title">Instagram posts on your site</h2>
       ${line}
       ${soon && !ig.lastError ? '<p class="hint">The connection renews by itself. If this message stays for more than a day, connect again with a new token.</p>' : ''}
       ${!ig.fresh && posts.length ? '<p class="hint">Posts are hidden on the site until the next good update, because Instagram photo links expire after a few days.</p>' : ''}
@@ -275,7 +306,7 @@ function tabInstagram() {
       </div>
     </section>
     <section class="stack">
-      <h2 class="section-title">On your website</h2>
+      <h2 class="section-title">How they show</h2>
       <label class="check-row"><input type="checkbox" data-ig-show ${ig.show ? 'checked' : ''}> Show my Instagram posts in "Recent work"</label>
       <div class="field" style="max-width:260px"><label for="ig-count">How many posts</label><select id="ig-count" data-ig-count>${[3, 6, 9, 12]
         .map((n) => `<option value="${n}" ${Number(ig.count) === n ? 'selected' : ''}>${n} posts</option>`)
@@ -297,8 +328,7 @@ function tabInstagram() {
       <h2 class="section-title">Disconnect</h2>
       <p class="hint">Stops showing posts and deletes the saved token and posts from your site.</p>
       <div class="row-actions" data-ig-disconnect-box><button type="button" class="btn btn-danger-quiet btn-small" data-ig-disconnect>Disconnect Instagram</button></div>
-    </section>
-  </div>`;
+    </section>`;
 }
 
 // ---------- privacy
@@ -439,17 +469,19 @@ function tabSecurity() {
   </div>`;
 }
 
-const DRAFT_TABS = ['business', 'hours', 'policies', 'messages', 'privacy'];
+const DRAFT_TABS = ['business', 'hours', 'website', 'social', 'policies', 'messages', 'privacy'];
 
 function render(main) {
+  if (S.settingsTab === 'instagram') S.settingsTab = 'social'; // the Instagram tab became Social media
   const tab = TABS.some(([k]) => k === S.settingsTab) ? S.settingsTab : 'business';
   const body = {
     business: tabBusiness,
     hours: tabHours,
+    website: tabWebsite,
+    social: tabSocial,
     policies: tabPolicies,
     messages: tabMessages,
     photos: tabPhotos,
-    instagram: tabInstagram,
     calendar: tabCalendar,
     privacy: tabPrivacy,
     backup: tabBackup,
@@ -466,6 +498,13 @@ function render(main) {
         ? `<div class="save-bar" data-save-bar ${S.settingsDraft ? '' : 'hidden'}><span>You have unsaved changes.</span><div class="row-actions"><button type="button" class="btn btn-quiet btn-small" data-discard>Discard</button><button type="button" class="btn btn-primary btn-small" data-save>Save</button></div></div>`
         : ''
     }`;
+  // On a phone the tabs scroll sideways: keep the open one in view.
+  const bar = main.querySelector('.tabs');
+  const open = bar && bar.querySelector('[aria-selected="true"]');
+  if (open) {
+    const over = open.getBoundingClientRect().right - bar.getBoundingClientRect().right;
+    if (over > 0) bar.scrollLeft += over + 24;
+  }
 }
 
 function setPath(obj, path, value) {

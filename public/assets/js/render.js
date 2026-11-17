@@ -36,6 +36,24 @@ export function igUrl(handle) {
   return `https://www.instagram.com/${encodeURIComponent(handle || 'barebeautybyionee')}/`;
 }
 
+export function tiktokUrl(handle) {
+  return `https://www.tiktok.com/@${encodeURIComponent(handle)}`;
+}
+
+// Her social accounts, in the order they show, each with its link and what the link says.
+// Facebook links are cleaned by the server to https://www.facebook.com/...
+export function socialLinks(b) {
+  const out = [];
+  if (!b) return out;
+  if (b.instagram) out.push({ key: 'instagram', name: 'Instagram', href: igUrl(b.instagram), text: `@${b.instagram}` });
+  if (b.tiktok) out.push({ key: 'tiktok', name: 'TikTok', href: tiktokUrl(b.tiktok), text: `@${b.tiktok}` });
+  if (b.facebook && /^https:\/\/www\.facebook\.com\//.test(b.facebook)) {
+    const page = (b.facebook.match(/^https:\/\/www\.facebook\.com\/([A-Za-z0-9.]+)$/) || [])[1];
+    out.push({ key: 'facebook', name: 'Facebook', href: b.facebook, text: page ? `@${page}` : b.name || 'Bare Beauty by Ionee' });
+  }
+  return out;
+}
+
 export function telHref(phone) {
   const d = String(phone || '').replace(/[^\d+]/g, '');
   return d ? `tel:${d}` : '';
@@ -192,13 +210,40 @@ export function renderContact(b) {
   if (b.phone) {
     items.push(`<li><span class="contact-label">${icon('phone')}Text or call</span><a href="${esc(smsHref(b.phone))}">${esc(b.phone)}</a></li>`);
   }
-  if (b.instagram) {
-    items.push(`<li><span class="contact-label">${icon('instagram')}Instagram</span><a href="${esc(igUrl(b.instagram))}" rel="noopener">@${esc(b.instagram)}</a></li>`);
+  for (const s of socialLinks(b)) {
+    items.push(`<li><span class="contact-label">${icon(s.key)}${s.name}</span><a href="${esc(s.href)}" rel="noopener">${esc(s.text)}</a></li>`);
   }
   if (b.email) {
     items.push(`<li><span class="contact-label">${icon('mail')}Email</span><a href="mailto:${esc(b.email)}">${esc(b.email)}</a></li>`);
   }
   return items.join('');
+}
+
+// The social links at the bottom of the page: icon, then name.
+export function renderSocial(b) {
+  return socialLinks(b)
+    .map((s) => `<a href="${esc(s.href)}" rel="noopener">${icon(s.key)}${s.name}</a>`)
+    .join('');
+}
+
+// The line under the tagline, with her area at the end: "Facials, waxing and lashes in Lakeland, FL."
+// A line that ends in ! or ? is left as she wrote it.
+export function heroLine(line, area) {
+  const t = String(line || '').trim().replace(/[\s.]+$/, '');
+  if (!t) return '';
+  if (/[!?]$/.test(t)) return t;
+  return `${t}${area ? ` in ${area}` : ''}.`;
+}
+
+// The script lines at the bottom of the page, one per line she typed.
+export function renderSignoff(text) {
+  return String(text || '')
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .slice(0, 3)
+    .map((l) => `<span>${esc(l)}</span>`)
+    .join(' ');
 }
 
 // Stand-ins for "Recent work" until her Instagram is connected or she uploads photos:

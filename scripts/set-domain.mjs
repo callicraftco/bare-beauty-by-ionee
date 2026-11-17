@@ -4,7 +4,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 
 const domain = (process.argv[2] || '').replace(/^https?:\/\//, '').replace(/\/.*$/, '').toLowerCase();
 if (!/^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(domain)) {
-  console.error('Give the domain, like: node scripts/set-domain.mjs barebeautybyionee.com');
+  console.error('Give the domain, like: node scripts/set-domain.mjs www.ibarebeauty.com');
   process.exit(1);
 }
 const files = ['public/index.html', 'public/privacy/index.html', 'public/terms/index.html', 'public/accessibility/index.html', 'public/robots.txt', 'public/sitemap.xml'];

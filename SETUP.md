@@ -4,7 +4,7 @@ Everything runs on Netlify's free plan. No database account, no booking subscrip
 
 - Public site: `/` (landing page, menu, Instagram posts), `/book/` (online booking), `/appointment/` (a client's own view and cancel link)
 - Policy pages: `/privacy/`, `/terms/` (booking terms) and `/accessibility/`, linked in every footer and in the booking form
-- Studio panel for Ionee: `/admin/` (requests, schedule, clients, menu, hours, texts, photos, Instagram, privacy tools, backups)
+- Studio panel for Ionee: `/admin/` (requests, schedule, clients, menu, hours, website text, social links and Instagram feed, texts, photos, privacy tools, backups)
 - API: one Netlify Function at `/api/*`. Data lives in Netlify Blobs on the same site.
 - Scheduled functions: a daily job (reminder emails, clean-up) and an Instagram sync every 6 hours.
 - Optional: booking emails through Resend (free tier), a calendar feed for her phone.
@@ -17,7 +17,7 @@ Everything runs on Netlify's free plan. No database account, no booking subscrip
 | Domain at Cloudflare | about $10.46 a year for a .com | Cloudflare sells at cost. Check the price at checkout. |
 | Instagram API | $0 | Reading her own posts needs no paid plan and no app review. |
 | Resend (optional) | $0 | 100 emails a day, 3,000 a month on the free plan. |
-| Cloudflare Email Routing (optional) | $0 | hello@yourdomain forwards to Ionee's Gmail. |
+| Cloudflare Email Routing (optional) | $0 | hello@ibarebeauty.com forwards to Ionee's Gmail. |
 
 How far 300 credits go (estimate): the home page is about 115 KB and 12 requests before photos. Six Instagram posts add about 250 KB, but only for visitors who scroll down to them. That works out to roughly 20,000 visits a month with a couple of deploys. Netlify counts resized Instagram images as bandwidth today and has said Image CDN pricing may change, so check the usage page in Netlify now and then. Accounts created before September 4, 2025 may still be on the older free plan, which counts usage differently.
 
@@ -35,20 +35,25 @@ Use Git (above) or the Netlify CLI (`npm install`, then `netlify deploy --prod`)
 
 Environment variable changes only apply after a new deploy (Deploys, then Trigger deploy).
 
-## 2. Connect the Cloudflare domain
+## 2. Connect the domain: ibarebeauty.com
 
-1. Buy the domain in Cloudflare Registrar (for example `barebeautybyionee.com`). Cloudflare domains keep their DNS at Cloudflare, so you add records there instead of moving DNS to Netlify.
-2. In Netlify: Domain management, then Add a domain, then enter the domain. Choose to keep DNS where it is (external DNS).
-3. In Cloudflare DNS, add these records. Set both to DNS only (grey cloud):
+The domain is at Cloudflare, so its DNS stays at Cloudflare and you add two records there. The main address is `www.ibarebeauty.com`, and `ibarebeauty.com` forwards to it. Netlify recommends a www address as the main one when DNS is outside Netlify, because only that one gets their direct CDN routing. People can still type or print `ibarebeauty.com`.
+
+1. In Netlify: Domain management, then Add a domain, then enter `www.ibarebeauty.com`. Netlify adds `ibarebeauty.com` alongside it. If it offers to set up Netlify DNS, skip that.
+2. In Cloudflare: open the domain, then DNS, then Records. Delete any A, AAAA or CNAME records already named `@` or `www`. Add these two, both set to DNS only (grey cloud):
 
 | Type | Name | Target |
 |---|---|---|
+| CNAME | `www` | `barebeautybyionee.netlify.app` |
 | CNAME | `@` | `apex-loadbalancer.netlify.com` |
-| CNAME | `www` | `<your-site>.netlify.app` |
 
-   Cloudflare flattens a CNAME at the root automatically. Netlify's fallback for the root is an A record to `75.2.60.5` if you prefer.
-4. Back in Netlify, wait for DNS verification and the free HTTPS certificate. This can take a few minutes to a few hours. Make the root domain the primary domain.
-5. If the domain is not `barebeautybyionee.com`, run `node scripts/set-domain.mjs yourdomain.com`, then commit and push. It updates the social preview image link, sitemap, robots file and the policy pages' canonical links.
+   Cloudflare flattens a CNAME at the root automatically. Netlify's fallback for the root is an A record to `75.2.60.5`.
+3. Back in Netlify, wait for DNS verification and the free HTTPS certificate. Usually minutes, sometimes a few hours. Check that `www.ibarebeauty.com` is the primary domain.
+4. Test: `https://ibarebeauty.com/` should land on `https://www.ibarebeauty.com/`, with the padlock.
+
+The site's canonical links, share preview, sitemap and robots file already point at `https://www.ibarebeauty.com/`. If the domain ever changes, run `node scripts/set-domain.mjs www.newdomain.com`, then commit and push.
+
+The panel moves with it: `https://www.ibarebeauty.com/admin/`. Ionee signs in once on the new address. The netlify.app address keeps working, and Netlify tells search engines the custom domain is the real one.
 
 Why DNS only: Netlify issues and renews the HTTPS certificate and already serves the site from its CDN. A second CDN in front adds caching surprises and nothing Ionee needs.
 
@@ -56,12 +61,12 @@ Why DNS only: Netlify issues and renews the HTTPS certificate and already serves
 
 Without this, the site still works. New requests show on the panel's Today screen with a badge, in the calendar feed, and the panel checks for new bookings every minute while it's open.
 
-1. Cloudflare Email Routing: forward `hello@yourdomain` to Ionee's Gmail.
-2. Resend: create a free account, add the domain, and click Sign in to Cloudflare to add the DNS records automatically (MX and TXT on `send`, TXT on `resend._domainkey`). It does not touch the Email Routing records.
+1. Cloudflare Email Routing: forward `hello@ibarebeauty.com` to Ionee's Gmail.
+2. Resend: create a free account, add `ibarebeauty.com`, and click Sign in to Cloudflare to add the DNS records automatically (MX and TXT on `send`, TXT on `resend._domainkey`). It does not touch the Email Routing records.
 3. Create a Resend API key with sending access.
 4. Add these Netlify environment variables, then trigger a deploy:
    - `RESEND_API_KEY`: the key from step 3
-   - `MAIL_FROM`: `Bare Beauty by Ionee <hello@yourdomain>`
+   - `MAIL_FROM`: `Bare Beauty by Ionee <hello@ibarebeauty.com>`
    - `NOTIFY_EMAIL` (optional): where booking alerts go. If empty, they go to the studio email set in the panel.
 5. In the panel: Settings, Calendar, Send me a test email.
 
@@ -83,11 +88,11 @@ Before you start, her Instagram must be a professional account (Creator or Busin
 5. Add Ionee's Instagram as a tester: App roles, Roles, Add People, Instagram Tester, type her Instagram username, Add.
 6. Ionee accepts: on instagram.com in a browser, Settings, Apps and websites, the Tester invites tab, Accept.
 7. Back on the API setup page, under Generate access tokens: Add account, sign in as her Instagram, then expand the account and click Generate token. Tick I understand and copy the token. It's shown only once. If you lose it, generate a new one.
-8. In the studio panel: Settings, Instagram, paste the token, Connect Instagram. Posts appear within a few minutes.
+8. In the studio panel: Settings, Social media, paste the token, Connect Instagram. Posts appear within a few minutes.
 
 After that it runs on its own. The token lasts 60 days and the site renews it automatically every few days, so it never runs out while the site is live. The token stays in the site's private storage and is never sent to a browser.
 
-What visitors get: the photos are resized and served from your own domain by Netlify Image CDN, so the page stays fast and visitors' browsers never contact Instagram. Reels show their cover image. Each tile links to the post. If Instagram can't be reached for 3 days, the site quietly falls back to the photos uploaded in Settings, Photos (Instagram's photo links expire after a few days, so old ones aren't shown). Settings, Instagram shows the last update and any problem, and the Today screen flags it too.
+What visitors get: the photos are resized and served from your own domain by Netlify Image CDN, so the page stays fast and visitors' browsers never contact Instagram. Reels show their cover image. Each tile links to the post. If Instagram can't be reached for 3 days, the site quietly falls back to the photos uploaded in Settings, Photos (Instagram's photo links expire after a few days, so old ones aren't shown). Settings, Social media shows the last update and any problem, and the Today screen flags it too.
 
 If it stops working: the most common cause is a changed Instagram password or switching the account back to personal. Generate a new token (steps 7 and 8) and connect again.
 
@@ -104,6 +109,7 @@ Go through these with Ionee. The site shows placeholders until they're done, and
 - Requests or instant booking. It starts in request mode: she confirms every booking.
 - Payment note, for example the payment apps she accepts.
 - Her own password, a portrait for the About section, and Instagram connected (or a few photos of her work).
+- Her TikTok and Facebook links, if she has them (Settings, Social media), and the words on the home page (Settings, Website).
 - The calendar link on her phone (Settings, Calendar).
 - Add the panel to her home screen: open `/admin/` in Safari, tap Share, then Add to Home Screen.
 

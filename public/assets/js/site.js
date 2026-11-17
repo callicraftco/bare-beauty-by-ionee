@@ -1,5 +1,5 @@
 // Landing page: pulls the live menu, hours and details Ionee edits in her panel.
-import { esc, igUrl, renderContact, renderFaq, renderHours, renderMenu, renderSampleWork, ribbonWords } from './render.js';
+import { esc, heroLine, igUrl, renderContact, renderFaq, renderHours, renderMenu, renderSampleWork, renderSignoff, renderSocial, ribbonWords, socialLinks } from './render.js';
 import { fillRibbon, initMotion, prepareReveals } from './motion.js';
 
 const $ = (sel, el = document) => el.querySelector(sel);
@@ -13,7 +13,7 @@ function remember(el) {
   if (el) shown.set(el, normalize(el.innerHTML));
 }
 function swap(el, html) {
-  if (!el || !html) return false;
+  if (!el || html == null) return false;
   const next = normalize(html);
   if (shown.get(el) === next) return false;
   el.innerHTML = html;
@@ -80,8 +80,19 @@ function apply(data) {
   const tagline = $('[data-bind="tagline"]');
   if (tagline && b.tagline) tagline.textContent = b.tagline;
 
-  const suffix = $('[data-bind="area-suffix"]');
-  if (suffix) suffix.textContent = b.area ? ` in ${b.area}` : '';
+  // Lines Ionee writes in Settings, Website (and the notes under Hours and Where).
+  // An empty one is hidden.
+  const w = data.website || {};
+  const pick = (key, fallback) => (typeof w[key] === 'string' ? w[key] : fallback);
+  setLine('[data-bind="services-line"]', heroLine(pick('servicesLine', BAKED.servicesLine), b.area));
+  setLine('[data-bind="hours-note"]', pick('hoursNote', BAKED.hoursNote));
+  setLine('[data-bind="where-note"]', pick('whereNote', BAKED.whereNote));
+  const signoff = $('[data-signoff]');
+  if (signoff && typeof w.signoff === 'string') {
+    const html = renderSignoff(w.signoff);
+    signoff.hidden = !html;
+    if (html) swap(signoff, html);
+  }
 
   const area = $('[data-bind="area"]');
   if (area) {
@@ -92,19 +103,21 @@ function apply(data) {
   const about = $('[data-about]');
   if (about && b.about) about.innerHTML = paragraphs(b.about);
 
-  if (b.instagram) {
-    $$('[data-ig]').forEach((a) => {
-      a.href = igUrl(b.instagram);
-    });
-    const handle = $('[data-bind="ig-handle"]');
-    if (handle) handle.textContent = `@${b.instagram}`;
-  }
+  // Instagram links in About and Recent work. They hide if she removes her handle.
+  $$('[data-ig]').forEach((a) => {
+    if (b.instagram) a.href = igUrl(b.instagram);
+    a.hidden = !b.instagram;
+  });
+  const handle = $('[data-bind="ig-handle"]');
+  if (handle && b.instagram) handle.textContent = `@${b.instagram}`;
 
   $$('[data-bind="name"]').forEach((n) => {
     if (b.name) n.textContent = b.name;
   });
 
   swap($('[data-contact]'), renderContact(b));
+  swap($('[data-social]'), renderSocial(b));
+  updateSchema(b);
 
   // The last booking step says what happens next: a request she confirms, or booked right away.
   if (data.booking) {
@@ -133,6 +146,37 @@ function apply(data) {
   }
 
   renderWork(data, b);
+}
+
+function setLine(sel, text) {
+  const el = $(sel);
+  if (!el) return;
+  el.textContent = text || '';
+  el.hidden = !text;
+}
+
+// What the page says before the live data arrives, so an older API answer falls back to it.
+const BAKED = {
+  servicesLine: (($('[data-bind="services-line"]') || {}).textContent || '').trim(),
+  hoursNote: (($('[data-bind="hours-note"]') || {}).textContent || '').trim(),
+  whereNote: (($('[data-bind="where-note"]') || {}).textContent || '').trim(),
+};
+
+// The business details search engines read: name, tagline and her social accounts.
+function updateSchema(b) {
+  const tag = $('script[type="application/ld+json"]');
+  if (!tag) return;
+  try {
+    const info = JSON.parse(tag.textContent);
+    if (b.name) info.name = b.name;
+    if (b.tagline) info.slogan = b.tagline;
+    const same = socialLinks(b).map((s) => s.href);
+    if (same.length) info.sameAs = same;
+    else delete info.sameAs;
+    tag.textContent = JSON.stringify(info);
+  } catch {
+    // Leave the baked-in details as they are.
+  }
 }
 
 // Instagram's image servers, resized and served from this site by Netlify Image CDN.
@@ -171,7 +215,7 @@ function renderWork(data, b, { skipInstagram = false } = {}) {
           } loading="lazy" decoding="async"></figure>`,
       )
       .join('');
-  } else {
+  } else if (b.instagram) {
     html = renderSampleWork(b);
   }
   section.hidden = !html;
@@ -202,7 +246,7 @@ async function hydrate() {
   }
 }
 
-['[data-menu]', '[data-faq]', '[data-hours]', '[data-contact]'].forEach((sel) => remember($(sel)));
+['[data-menu]', '[data-faq]', '[data-hours]', '[data-contact]', '[data-social]', '[data-signoff]'].forEach((sel) => remember($(sel)));
 chrome();
 initMotion();
 hydrate();

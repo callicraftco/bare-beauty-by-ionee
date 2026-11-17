@@ -196,10 +196,13 @@ function publicSite(settings, services, media, feed, igAccount) {
       phone: b.phone,
       email: b.email,
       instagram: b.instagram,
+      tiktok: b.tiktok,
+      facebook: b.facebook,
       about: b.about,
       announcement: b.announcement,
       timezone: b.timezone,
     },
+    website: settings.website,
     hours: settings.hours,
     booking: {
       mode: settings.booking.mode,
@@ -268,6 +271,42 @@ async function getAvailability({ url }) {
 function cleanInstagram(v) {
   return str(v, 60).replace(/^@+/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/[^A-Za-z0-9._]/g, '').slice(0, 30);
 }
+
+// A TikTok handle, from "@name", "name" or a profile link.
+function cleanTiktok(v) {
+  const raw = str(v, 160);
+  if (!raw) return '';
+  const handle = raw
+    .replace(/^(https?:\/\/)?(www\.|m\.)?tiktok\.com\//i, '')
+    .replace(/^@+/, '')
+    .replace(/[/?#].*$/, '');
+  if (!/^[A-Za-z0-9._]{2,24}$/.test(handle)) {
+    fail(400, "That TikTok handle doesn't look right. Use the name after the @, or paste the link to your profile.");
+  }
+  return handle;
+}
+
+// A link to a Facebook page, from a full link, a link without https, or the page's username.
+// Stored as https://www.facebook.com/... with tracking parameters removed.
+function cleanFacebook(v) {
+  const raw = str(v, 300);
+  if (!raw) return '';
+  const bad = () => fail(400, "That Facebook link doesn't look right. Open your page, copy the link from the address bar and paste it here.");
+  const m = raw.match(/^(?:https?:\/\/)?(?:(?:www|m|web|business)\.)?(?:facebook|fb)\.com\/(.+)$/i);
+  let path = m ? m[1] : /^@?[A-Za-z0-9.]{3,50}$/.test(raw) ? raw.replace(/^@/, '') : bad();
+  const [rawPath, query = ''] = path.split(/[?#]/);
+  path = rawPath.replace(/\/+$/, '');
+  if (!path || !/^[A-Za-z0-9._\-/%]+$/.test(path)) bad();
+  if (/^profile\.php$/i.test(path)) {
+    const id = new URLSearchParams(query).get('id') || '';
+    if (!/^\d{5,25}$/.test(id)) bad();
+    return `https://www.facebook.com/profile.php?id=${id}`;
+  }
+  return `https://www.facebook.com/${path}`;
+}
+
+// One line of text for the page: no line breaks.
+const line = (v, max) => str(v, max).replace(/\s*\n\s*/g, ' ');
 
 function contactFrom(body, { requirePhone }) {
   const name = str(body.name, 80);
@@ -1073,9 +1112,25 @@ function cleanSettings(body, current) {
     phone: str(b.phone ?? current.business.phone, 30),
     email,
     instagram: cleanInstagram(b.instagram ?? current.business.instagram),
+    tiktok: cleanTiktok(b.tiktok ?? current.business.tiktok),
+    facebook: cleanFacebook(b.facebook ?? current.business.facebook),
     about: text(b.about ?? current.business.about, 1500),
     announcement: str(b.announcement ?? current.business.announcement, 160),
     timezone: tz,
+  };
+  const w = body.website || {};
+  const cw = current.website;
+  const website = {
+    servicesLine: line(w.servicesLine ?? cw.servicesLine, 160),
+    hoursNote: line(w.hoursNote ?? cw.hoursNote, 160),
+    whereNote: line(w.whereNote ?? cw.whereNote, 200),
+    // Up to 3 short lines, each written out in turn at the bottom of the page.
+    signoff: text(w.signoff ?? cw.signoff, 200)
+      .split('\n')
+      .map((l) => l.trim().slice(0, 60))
+      .filter(Boolean)
+      .slice(0, 3)
+      .join('\n'),
   };
   const hours = {};
   for (const d of ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']) {
@@ -1119,7 +1174,7 @@ function cleanSettings(body, current) {
     menuReviewed: bool(s.menuReviewed ?? current.setup.menuReviewed, false),
     policiesReviewed: bool(s.policiesReviewed ?? current.setup.policiesReviewed, false),
   };
-  return { business, hours, booking, faq, templates, privacy, setup, updatedAt: new Date().toISOString() };
+  return { business, website, hours, booking, faq, templates, privacy, setup, updatedAt: new Date().toISOString() };
 }
 
 async function putSettings({ req }) {

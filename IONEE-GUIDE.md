@@ -1,6 +1,6 @@
 # Your studio panel
 
-Your website has a private panel for bookings, clients and your menu. Open it at **yourdomain.com/admin** and sign in with your password.
+Your website has a private panel for bookings, clients and your menu. Open it at **ibarebeauty.com/admin** and sign in with your password.
 
 Put it on your phone's home screen so it opens like an app: open the link in Safari, tap Share, then Add to Home Screen.
 
@@ -51,12 +51,15 @@ Change prices, times and descriptions. Your website updates within a few minutes
 
 ## Settings
 
-- **Business**: phone, email, the area you work in (shown on the site) and your address (only sent once a booking is confirmed). Your About text and an announcement bar for the top of the site, like "Booked through Nov 15".
-- **Booking**: your weekly hours, whether you confirm each request or bookings confirm right away, cleanup time between clients, how much notice you need, how far ahead people can book, and your payment note.
+Anything you save here shows on your website within a few minutes.
+
+- **Business**: your business name, phone, email and time zone. The area you work in (shown on the site), your address (only sent once a booking is confirmed), and the note under "Where".
+- **Hours and booking**: your weekly hours, and the note under them on the site. Use the note for things like a holiday closure. Below that: whether you confirm each request or bookings confirm right away, cleanup time between clients, how much notice you need, how far ahead people can book, and your payment note.
+- **Website**: the words on your home page. The announcement bar across the top (like "Booked through Nov 15"), your tagline, the line under it, your About text, and the closing line written in script at the bottom. Leave a line empty to hide it.
+- **Social media**: your Instagram, TikTok and Facebook. Each one you fill in shows under "Get in touch" and at the bottom of your home page. Below that, your Instagram posts: your latest posts fill "Recent work" and update by themselves every few hours. Choose how many show (3 to 12), switch them off, or tap Update now right after you post. Connecting the first time needs a one-time setup from your web person.
+- **Photos**: your portrait for the About section, and photos of your work. They show in "Recent work" whenever Instagram isn't connected or switched on.
 - **Policies**: the questions and answers in "Before you come" on your site.
 - **Texts**: the words your Text buttons fill in. The preview shows what a client will see.
-- **Photos**: your portrait for the About section, and photos of your work. They show in "Recent work" whenever Instagram isn't connected or switched on.
-- **Instagram**: your latest posts fill "Recent work" and update by themselves every few hours. Choose how many show (3 to 12), switch them off, or tap Update now right after you post. Connecting the first time needs a one-time setup from your web person.
 - **Calendar**: a private link that puts your bookings in your phone's calendar, with steps for iPhone and Google, and a test for booking emails. To keep clients' details private, the calendar shows first names, last initials and services. Phone numbers and notes stay in the panel.
 - **Privacy**: links to your privacy policy, booking terms and accessibility page, and how long to keep client records. Records of clients who haven't visited in that long are cleared on the 1st of each month.
 - **Backup**: download a backup once a month and keep it in Google Drive.

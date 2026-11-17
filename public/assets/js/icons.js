@@ -1,6 +1,7 @@
 // Line icons on a 24px grid: round caps, drawn in the current text color (stroke set in base.css).
 // Most shapes are from Lucide (ISC license, see assets/fonts/LICENSES.txt). "facial" and "wax"
-// are drawn for this site in the same style.
+// are drawn for this site in the same style. TikTok and Facebook get plain icons (a play button,
+// a thumbs up), not their logos. The name next to each one says which it is.
 
 const SHAPES = {
   // A drop of moisture with a glint: facials
@@ -30,6 +31,9 @@ const SHAPES = {
     '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
   mail: '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>',
   instagram: '<rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/>',
+  tiktok: '<circle cx="12" cy="12" r="10"/><path d="M9.5 8.6a.75.75 0 0 1 1.14-.64l5.3 3.4a.75.75 0 0 1 0 1.27l-5.3 3.4a.75.75 0 0 1-1.14-.64z"/>',
+  facebook:
+    '<path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/>',
 };
 
 export const ICON_NAMES = Object.keys(SHAPES);

@@ -45,7 +45,7 @@ function setupItems() {
     { done: d.hasOwnPassword, text: 'Choose your own password', go: '#settings', tab: 'security' },
     { done: d.media.some((m) => m.kind === 'about'), text: 'Add a photo of you for the About section', go: '#settings', tab: 'photos' },
     { done: Boolean(d.settings.setup.policiesReviewed), text: 'Read your privacy policy and booking terms', go: '#settings', tab: 'privacy' },
-    { done: Boolean(d.instagram && d.instagram.connected), text: 'Show your Instagram posts on the site (needs a one-time setup)', go: '#settings', tab: 'instagram', optional: true },
+    { done: Boolean(d.instagram && d.instagram.connected), text: 'Show your Instagram posts on the site (needs a one-time setup)', go: '#settings', tab: 'social', optional: true },
     { done: d.mail.enabled, text: 'Get booking emails (needs a one-time setup in Netlify)', go: '#settings', tab: 'calendar', optional: true },
   ];
 }
@@ -56,7 +56,7 @@ function noticesCard() {
   const items = [];
   const ig = d.instagram;
   if (ig && ig.connected && ig.lastError) {
-    items.push({ text: `Instagram needs a look: ${ig.lastError}`, tab: 'instagram', label: 'Open Instagram settings' });
+    items.push({ text: `Instagram needs a look: ${ig.lastError}`, tab: 'social', label: 'Open Instagram settings' });
   }
   const check = d.privacyCheck;
   const years = Number(d.settings.privacy && d.settings.privacy.retentionYears) || 0;
